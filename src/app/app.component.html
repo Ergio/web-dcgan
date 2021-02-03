@@ -1,0 +1,37 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+
+
+<div style="margin: 20px;">
+  <div style="display: flex; flex-direction: column;">
+    <mat-slider
+    (change)="changeY($event)"
+    thumbLabel
+    [displayWith]="formatLabel"
+    tickInterval="0.1"
+    min="-1000"
+    max="1000"></mat-slider>
+  
+    <mat-slider
+    (change)="changeX($event)"
+    thumbLabel
+    [displayWith]="formatLabel"
+    tickInterval="0.1"
+    min="-1000"
+    max="1000"></mat-slider>
+  </div>
+
+</div>
+
+<div  style="margin: 20px;">
+  <canvas #canvasEl></canvas>
+</div>
+
+<router-outlet></router-outlet>
