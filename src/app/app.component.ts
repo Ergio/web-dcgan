@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as tf from '@tensorflow/tfjs';
+import { randomNormal } from '@tensorflow/tfjs';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -12,25 +13,37 @@ export class AppComponent implements OnInit{
 
   CONST_VAL = 100
 
-  x = -1
-  y = -1
-  changeX(v: any) {
-    this.x = v.value
-    console.log(v)
-    this.run([this.x/this.CONST_VAL, this.y/this.CONST_VAL])
-  }
-  changeY(v: any) {
-    this.y = v.value
-    console.log(v)
-    this.run([this.x/this.CONST_VAL, this.y/this.CONST_VAL])
-  }
-
   constructor() {}
 
   ngOnInit() {
     this.model = tf.loadGraphModel(
       'assets/files/model.json');
-    this.run([this.x/this.CONST_VAL, this.y/this.CONST_VAL])
+    // this.run((new Array(100)).fill(1).map(v => Math.random()))
+    // this.recursive()
+
+    // console.log(this.arr)
+    // this.run(this.arr)
+    this.recursive()
+  }
+  
+
+  ind = 0
+  difArr = Array.from(randomNormal([1, 100]).dataSync())
+  arr = Array.from(randomNormal([1, 100]).dataSync())
+  recursive() {
+    this.ind++
+    this.arr = this.arr.map((v, i) => v + this.difArr[i]*0.1)
+    if (this.ind % 10 === 0) {
+      const newArr = (Array.from(randomNormal([1, 100]).dataSync()))
+      this.difArr =  this.arr.map((v, i) => {
+        return newArr[i] - v
+      })
+    }
+
+    setTimeout(() => {
+      this.run(this.arr)
+      this.recursive()
+    }, 50)
   }
 
 
@@ -42,17 +55,18 @@ export class AppComponent implements OnInit{
 
 
   async run(arr: any) {
-    console.log(arr)
     const val = tf.tensor([arr])//tf.ones([1,2])
+    console.log(val)
     this.model.then(v => {
       const tensor = v.predict(val) as any
       const value = tensor.dataSync()
-      this.createImg(value.map((v: any) => v + 1))
+      this.createImg(value.map((v: any) => v ))
     })
 }
 
 
  createImg(predictedValue) {
+   console.log('createImg')
     var canvas=this.canvasEl.nativeElement;
     var ctx=canvas.getContext("2d");
     canvas.width=256;
@@ -65,5 +79,5 @@ export class AppComponent implements OnInit{
     ctx.putImageData(imgData,0,0);
     var image=new Image();
     image.src=canvas.toDataURL();
-}
+  }
 }
