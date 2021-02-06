@@ -1,0 +1,11 @@
+<div style=" display: flex; align-items: center; justify-content: center; flex-direction: column;">
+    <button mat-raised-button (click)="show()" color="secondary">Run 2</button>
+    <div style="background: black; width: 258px;">
+        <div *ngFor="let item of diff" class="mic"
+        [style.--gaining]="item"></div>
+    </div>
+    <div style="width: 100%;" *ngIf="diff.length">
+        <div>SD: {{sd(diff)}}</div>
+        <div>MEAN: {{mean(diff)}}</div>
+    </div>
+</div>

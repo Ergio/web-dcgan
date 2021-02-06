@@ -18,27 +18,41 @@ export class AppComponent implements OnInit{
   ngOnInit() {
     this.model = tf.loadGraphModel(
       'assets/files/model.json');
-    // this.run((new Array(100)).fill(1).map(v => Math.random()))
-    // this.recursive()
-
-    // console.log(this.arr)
-    // this.run(this.arr)
-    this.recursive()
   }
   
 
   ind = 0
   difArr = Array.from(randomNormal([1, 100]).dataSync())
   arr = Array.from(randomNormal([1, 100]).dataSync())
+
+  voiceChanged(e: any) {
+    console.log(e)
+    function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+    }
+    // shuffleArray(e)
+    e = e.reverse()
+
+    this.difArr =  this.arr.map((v, i) => {
+      return e[i] - v
+    })
+
+  }
+
   recursive() {
     this.ind++
-    this.arr = this.arr.map((v, i) => v + this.difArr[i]*0.1)
-    if (this.ind % 10 === 0) {
-      const newArr = (Array.from(randomNormal([1, 100]).dataSync()))
-      this.difArr =  this.arr.map((v, i) => {
-        return newArr[i] - v
-      })
-    }
+    this.arr = this.arr.map((v, i) => v + this.difArr[i]*0.2)
+    // if (this.ind % 10 === 0) {
+    //   const newArr = (Array.from(randomNormal([1, 100]).dataSync()))
+    //   this.difArr =  this.arr.map((v, i) => {
+    //     return newArr[i] - v
+    //   })
+    // }
 
     setTimeout(() => {
       this.run(this.arr)
@@ -56,7 +70,6 @@ export class AppComponent implements OnInit{
 
   async run(arr: any) {
     const val = tf.tensor([arr])//tf.ones([1,2])
-    console.log(val)
     this.model.then(v => {
       const tensor = v.predict(val) as any
       const value = tensor.dataSync()
@@ -66,7 +79,6 @@ export class AppComponent implements OnInit{
 
 
  createImg(predictedValue) {
-   console.log('createImg')
     var canvas=this.canvasEl.nativeElement;
     var ctx=canvas.getContext("2d");
     canvas.width=256;
@@ -80,4 +92,6 @@ export class AppComponent implements OnInit{
     var image=new Image();
     image.src=canvas.toDataURL();
   }
+
+
 }

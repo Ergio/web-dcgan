@@ -10,9 +10,17 @@
 
 
 
+<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+  <div>
+    <canvas #canvasEl></canvas>
 
-<div  style="margin: 20px;">
-  <canvas #canvasEl></canvas>
+  </div>
+  <button mat-raised-button color="secondary" (click)="recursive()">Run 1</button>
+  
+  
+  <router-outlet></router-outlet>
+  
+  <app-microphone-container (voice)="voiceChanged($event)"></app-microphone-container>
+  
+  <app-order></app-order>
 </div>
-
-<router-outlet></router-outlet>

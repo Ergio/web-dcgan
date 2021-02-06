@@ -1,0 +1,24 @@
+.mic {
+  position: relative;
+  display: inline-block;
+  width: 2px;
+  height: 100px;
+  // border: 1px solid;
+
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform-origin: left;
+  }
+
+  &:before {
+    background: linear-gradient(45deg, #eee, #fff);
+    transform: scaleY(calc(var(--gaining, 256) / 256));
+  }
+
+}
