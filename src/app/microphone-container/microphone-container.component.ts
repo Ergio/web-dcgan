@@ -8,6 +8,7 @@ import { ChangeDetectorRef, Component, OnInit, Output, ViewChild } from '@angula
 })
 export class MicrophoneContainerComponent implements OnInit{
   @Output() voice: EventEmitter<any> = new EventEmitter();
+  @Output() dataView: EventEmitter<any> = new EventEmitter();
   @ViewChild('canvasEl') canvasEl: any;
 
   val = 0
@@ -40,7 +41,6 @@ export class MicrophoneContainerComponent implements OnInit{
   }
 
   show() {
-    let minGain = 100;
     window.onload =  () => {
 
     };
@@ -52,25 +52,22 @@ export class MicrophoneContainerComponent implements OnInit{
       const audioStream = audioCtx.createMediaStreamSource(stream);
       const audioAnalyser = audioCtx.createAnalyser();
       audioStream.connect(audioAnalyser);
-      audioAnalyser.fftSize = 256;
+      audioAnalyser.fftSize = 1024;
       const frequencyArray = new Uint8Array(audioAnalyser.frequencyBinCount);
 
       let val = 0
       const listening =  () => {
-        let gaining = 0;
         audioAnalyser.getByteFrequencyData(frequencyArray);
 
         val++
-        if (val%2 === 0 ) {
+        if (val%1 === 0 ) {
           this.diff = [...frequencyArray].map((v, i) => Math.abs(this.frequencyArr[i] - v))
-          this.voice.emit(this.normalization(this.frequencyArr.slice(0, 100)))
+          this.voice.emit(this.normalization(this.frequencyArr.slice(0, 100).map(v => v < 30? 0 : v)))
           this.frequencyArr = [...frequencyArray]
+          this.dataView.emit(this.frequencyArr.slice(0, 100).map(v => v/1024))
+
         }
-        frequencyArray.forEach((f) => {
-          if (f > minGain) {
-            gaining++;
-          }
-        });
+
 
         requestAnimationFrame(listening);
       };

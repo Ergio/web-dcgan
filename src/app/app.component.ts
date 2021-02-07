@@ -10,23 +10,41 @@ export class AppComponent implements OnInit{
   @ViewChild('canvasEl') canvasEl: any;
   title = 'neural-app';
   model: any;
-
+  dataView = Object.keys(new Array(100).fill(0))
+  order = Object.keys(new Array(100).fill(0))
   CONST_VAL = 100
+  isLoaded= false
+  isRecursive = false
+  init = false
+  ind = 0
+  difArr = Array.from(randomNormal([1, 100]).dataSync())
+  arr = Array.from(randomNormal([1, 100]).dataSync())
 
   constructor() {}
 
   ngOnInit() {
     this.model = tf.loadGraphModel(
       'assets/files/model.json');
+      this.model.then(v => {
+        this.isLoaded = true
+      })
   }
-  
 
-  ind = 0
-  difArr = Array.from(randomNormal([1, 100]).dataSync())
-  arr = Array.from(randomNormal([1, 100]).dataSync())
+  changeOrder(e) {
+    this.order = e
+  }
+
+
+  updateDataView(e) {
+    this.dataView = this.order.map(v => e[v])
+  }
 
   voiceChanged(e: any) {
-    console.log(e)
+
+    if(!this.init) {
+      this.recursive()
+      this.init = true
+    }
     function shuffleArray(array) {
         for (var i = array.length - 1; i > 0; i--) {
             var j = Math.floor(Math.random() * (i + 1));
@@ -35,25 +53,25 @@ export class AppComponent implements OnInit{
             array[j] = temp;
         }
     }
-    // shuffleArray(e)
-    e = e.reverse()
 
-    this.difArr =  this.arr.map((v, i) => {
-      return e[i] - v
+    const voiceArrShuffled = this.order.map(v => e[v])
+    const sum = e.reduce((a,b) => a+b)
+
+    this.difArr =  (this.arr).map((v, i) => {
+      return voiceArrShuffled[i] - v
     })
+
+
+
 
   }
 
   recursive() {
     this.ind++
     this.arr = this.arr.map((v, i) => v + this.difArr[i]*0.2)
-    // if (this.ind % 10 === 0) {
-    //   const newArr = (Array.from(randomNormal([1, 100]).dataSync()))
-    //   this.difArr =  this.arr.map((v, i) => {
-    //     return newArr[i] - v
-    //   })
-    // }
-
+    if (this.ind % 10 ===0) {
+      const newDiff = Array.from(randomNormal([1, 100]).dataSync())
+    }
     setTimeout(() => {
       this.run(this.arr)
       this.recursive()
@@ -89,8 +107,6 @@ export class AppComponent implements OnInit{
         data[i+3]= 255 -predictedValue[i/4]*255;
     }
     ctx.putImageData(imgData,0,0);
-    var image=new Image();
-    image.src=canvas.toDataURL();
   }
 
 
